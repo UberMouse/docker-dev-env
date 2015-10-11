@@ -11,6 +11,7 @@ RUN ln -snf /bin/bash /bin/sh
 RUN apt-get update && apt-get install -y software-properties-common
 
 RUN add-apt-repository ppa:neovim-ppa/unstable && \
+    add-apt-repository ppa:pi-rho/dev && \
     apt-get update
 
 RUN apt-get install -y --no-install-recommends \
@@ -52,7 +53,7 @@ RUN apt-get install -y --no-install-recommends \
         openssl \
         patch \
         sqlite3 \
-        tmux \
+        tmux=2.0-1~ppa1~t \
         xz-utils \
         zlib1g-dev \
         zlib1g-dev \
