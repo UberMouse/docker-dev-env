@@ -54,6 +54,7 @@ RUN apt-get install -y --no-install-recommends \
         patch \
         sqlite3 \
         tmux=2.0-1~ppa1~t \
+        vim \
         xz-utils \
         zlib1g-dev \
         zlib1g-dev \
@@ -80,17 +81,16 @@ RUN git clone https://github.com/sstephenson/rbenv.git ~/.rbenv && \
 
 # Setup Git
 RUN git config --global color.ui true && \
-    git config --global user.name "Taylor LOdge" && \
+    git config --global user.name "Taylor Lodge" && \
     git config --global user.email "ubermouse894@gmail.com"
 
 # Setup ZSH
 RUN sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-RUN cat /dev/null && cat /dev/null && cat /dev/null && cat /dev/null
 RUN git clone https://github.com/UberMouse/dotfiles.git ~/dotfiles
 RUN chmod +x ~/dotfiles/link.sh
 RUN /bin/bash ~/dotfiles/link.sh
 # Trigger antigen install
-RUN cat ~/.zshrc
+# TODO: figure out why the source exits with exit code 1 so I can remove '; pwd'
 RUN /bin/zsh -c "source ~/.zshrc; pwd"
 
 # Setup Tmux & Vim Plugins
@@ -99,8 +99,13 @@ RUN /bin/bash ~/.tmux/plugins/tpm/bin/install_plugins
 
 RUN curl -fLo ~/.nvim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim && \
-    cat /dev/null #nvim -E -c 'PlugInstall' -c 'qall!'
+    vim +PlugInstall +qa
   
+# Install powerline Fonts
+RUN git clone https://github.com/powerline/fonts.git ~/powerline-fonts && \
+    bash ~/powerline-fonts/install.sh && \
+    fc-cache -vf ~/.fonts && \
+    rm -rf ~/powerline-fonts
 
 VOLUME ['~/.ssh']
 CMD ["tmux", "new-session", "-A", "-s", "main"]
